@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Function Graph Explorer | 函數圖像探究</title>
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME (Colour-blind friendly Okabe-Ito inspired palette)
+       ========================================================================== */
+    :root {
+      --bg-app: #f4f6f9;
+      --bg-panel: #ffffff;
+      --border-color: #d8dee9;
+      --text-main: #1e293b;
+      --text-muted: #526075;
+      
+      /* Primary Curve: Deep Blue */
+      --primary-curve: #0072b2;
+      /* Comparison Curve: Vermilion Orange */
+      --compare-curve: #d55e00;
+      /* Target Challenge Curve: Bluish Green */
+      --target-curve: #009e73;
+      /* Intercepts & Vertex Highlights */
+      --vertex-color: #cc79a7;
+      --intercept-color: #0072b2;
+      --trace-color: #e69f00;
+
+      --accent-btn: #0072b2;
+      --accent-btn-hover: #005585;
+      --radius: 10px;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang HK", "Microsoft JhengHei", sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       HEADER & MODE SELECTOR
+       ========================================================================== */
+    header {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .brand span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .mode-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      padding: 0.55rem 1rem;
+      border: 2px solid var(--border-color);
+      background: #fff;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      transition: all 0.15s ease;
+    }
+
+    .mode-btn:hover {
+      border-color: var(--primary-curve);
+    }
+
+    .mode-btn.active {
+      background: var(--primary-curve);
+      border-color: var(--primary-curve);
+      color: #fff;
+    }
+
+    .lang-toggle {
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--border-color);
+      background: #f8fafc;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .lang-toggle:hover {
+      background: #eef2f6;
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       MAIN 3-COLUMN RESPONSIVE GRID
+       ========================================================================== */
+    .workspace {
+      display: grid;
+      grid-template-columns: 330px 1fr 370px;
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 1650px;
+      margin: 0 auto;
+      min-height: calc(100vh - 76px);
+    }
+
+    @media (max-width: 1200px) {
+      .workspace {
+        grid-template-columns: 320px 1fr;
+      }
+      .inquiry-column {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ==========================================================================
+       CONTROLS & SLIDERS
+       ========================================================================== */
+    .equation-box {
+      background: #f1f5f9;
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+      font-family: "Cambria Math", "Times New Roman", serif;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: var(--primary-curve);
+      border: 1px solid #cbd5e1;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.6rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .slider-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary-curve);
+      cursor: pointer;
+    }
+
+    input[type="number"] {
+      width: 68px;
+      padding: 0.25rem 0.4rem;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 0.9rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .shape-notice {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 0.55rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-item input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary-curve);
+    }
+
+    /* Compare Panel */
+    .compare-box {
+      border-top: 1px dashed var(--border-color);
+      padding-top: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .compare-sliders {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      padding: 0.65rem;
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .compare-sliders input[type="range"] {
+      accent-color: var(--compare-curve);
+    }
+
+    .compare-eq {
+      font-family: "Cambria Math", "Times New Roman", serif;
+      font-weight: bold;
+      color: var(--compare-curve);
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    /* ==========================================================================
+       CENTER CANVAS & CHALLENGE BAR
+       ========================================================================== */
+    .canvas-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .canvas-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      background: #f8fafc;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .line-swatch {
+      width: 18px;
+      height: 4px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      min-height: 440px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    /* Challenge Mode Strip */
+    .challenge-bar {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .challenge-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .challenge-status {
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      display: inline-block;
+    }
+
+    .status-close {
+      background: #d1fae5;
+      border-color: #059669;
+      color: #065f46;
+    }
+
+    .status-not-close {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #991b1b;
+    }
+
+    /* ==========================================================================
+       BUTTONS
+       ========================================================================== */
+    .btn {
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-primary {
+      background: var(--accent-btn);
+      color: #fff;
+      border-color: var(--accent-btn);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-btn-hover);
+    }
+
+    .btn-challenge {
+      background: var(--target-curve);
+      color: #fff;
+      border-color: var(--target-curve);
+    }
+
+    .btn-challenge:hover {
+      background: #007d5b;
+    }
+
+    /* ==========================================================================
+       GUIDED INQUIRY & OBSERVATION LOG
+       ========================================================================== */
+    .inquiry-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 68vh;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .question-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .question-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .question-text .zh {
+      display: block;
+      font-weight: 500;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 0.2rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 64px;
+      padding: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary-curve);
+    }
+
+    .log-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.75rem;
+    }
+
+    /* Bilingual toggle helper */
+    body.hide-zh .zh {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       HEADER
+       ======================================================================== -->
+  <header>
+    <div class="brand">
+      <h1>Function Graph Explorer <span class="zh">| 函數圖像探究</span></h1>
+      <span>Form 4 Mathematics Inquiry Lab <span class="zh">中四數學探究活動</span></span>
+    </div>
+
+    <div class="mode-tabs" role="tablist">
+      <button class="mode-btn" data-mode="constant" role="tab">
+        1. Constant <span class="zh">常數函數</span>
+      </button>
+      <button class="mode-btn" data-mode="linear" role="tab">
+        2. Linear <span class="zh">線性函數</span>
+      </button>
+      <button class="mode-btn active" data-mode="quadratic" role="tab">
+        3. Quadratic <span class="zh">二次函數</span>
+      </button>
+    </div>
+
+    <button id="toggleLangBtn" class="lang-toggle" title="Show/Hide Traditional Chinese">
+      中文: ON / OFF
+    </button>
+  </header>
+
+  <!-- ========================================================================
+       MAIN WORKSPACE
+       ======================================================================== -->
+  <main class="workspace">
+
+    <!-- COLUMN 1: PARAMETERS & EXPLORATION TOOLS -->
+    <section class="panel">
+      <div class="panel-title">
+        <span>Parameters <span class="zh">參數控制</span></span>
+        <button id="resetParamsBtn" class="btn" title="Reset sliders">Reset <span class="zh">重設</span></button>
+      </div>
+
+      <!-- Current Equation Display -->
+      <div id="equationDisplay" class="equation-box">y = 1x² + 0x + 0</div>
+
+      <!-- Gentle Neutral Notice when a = 0 in Quadratic Mode -->
+      <div id="shapeNotice" class="shape-notice">
+        Notice: The graph changed shape. <span class="zh">留意：圖像的形狀改變了。</span>
+      </div>
+
+      <!-- Dynamic Sliders Container -->
+      <div id="slidersContainer" style="display: flex; flex-direction: column; gap: 0.65rem;"></div>
+
+      <!-- Graph Feature Checkboxes -->
+      <div class="panel-title" style="margin-top: 0.25rem;">
+        <span>Display Options <span class="zh">顯示選項</span></span>
+      </div>
+
+      <div class="checkbox-list">
+        <label class="checkbox-item">
+          <input type="checkbox" id="chkIntercepts" checked />
+          <span>Show intercepts <span class="zh">顯示截距點</span></span>
+        </label>
+
+        <label class="checkbox-item" id="vertexOptionRow">
+          <input type="checkbox" id="chkVertex" checked />
+          <span>Show vertex <span class="zh">顯示頂點</span></span>
+        </label>
+
+        <label class="checkbox-item">
+          <input type="checkbox" id="chkTrace" />
+          <span>Trace point on curve (drag on graph) <span class="zh">追蹤曲線上的一點（可拖曳）</span></span>
+        </label>
+      </div>
+
+      <!-- Quadratic Compare Panel -->
+      <div id="compareSection" class="compare-box">
+        <label class="checkbox-item" style="font-weight: 700;">
+          <input type="checkbox" id="chkCompare" />
+          <span>Compare two quadratics <span class="zh">比較兩個二次函數</span></span>
+        </label>
+
+        <div id="compareControls" class="compare-sliders">
+          <div id="compareEqDisplay" class="compare-eq">y = 1x² + 0x + 0</div>
+          <div id="compareSlidersContainer" style="display: flex; flex-direction: column; gap: 0.45rem;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 2: INTERACTIVE COORDINATE PLANE -->
+    <section class="panel canvas-panel">
+      <div class="canvas-toolbar">
+        <div class="legend">
+          <span class="legend-item">
+            <span class="line-swatch" style="background: var(--primary-curve);"></span>
+            Your Graph <span class="zh">你的圖像</span>
+          </span>
+          <span class="legend-item" id="legendCompare" style="display: none;">
+            <span class="line-swatch" style="background: var(--compare-curve);"></span>
+            Second Graph <span class="zh">第二個圖像</span>
+          </span>
+          <span class="legend-item" id="legendTarget" style="display: none;">
+            <span class="line-swatch" style="background: var(--target-curve); border-bottom: 2px dashed #fff;"></span>
+            Target Graph <span class="zh">目標圖像</span>
+          </span>
+          <span class="legend-item">
+            <span class="dot" style="background: var(--intercept-color);"></span>
+            Intercepts <span class="zh">截距</span>
+          </span>
+          <span class="legend-item" id="legendVertex">
+            <span class="dot" style="background: var(--vertex-color);"></span>
+            Vertex <span class="zh">頂點</span>
+          </span>
+          <span class="legend-item" id="legendTrace" style="display: none;">
+            <span class="dot" style="background: var(--trace-color);"></span>
+            Trace <span class="zh">追蹤點</span>
+          </span>
+        </div>
+
+        <div style="display: flex; gap: 0.4rem;">
+          <button id="zoomInBtn" class="btn" title="Zoom In">+</button>
+          <button id="zoomOutBtn" class="btn" title="Zoom Out">−</button>
+          <button id="resetViewBtn" class="btn">Center <span class="zh">置中</span></button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="graphCanvas"></canvas>
+      </div>
+
+      <!-- Challenge / Predict Mode -->
+      <div class="challenge-bar">
+        <div class="challenge-info">
+          <strong style="font-size: 0.92rem;">
+            Challenge Mode: Match the Target Graph <span class="zh">挑戰模式：配對目標圖像</span>
+          </strong>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Adjust your sliders until your curve overlaps the green target curve. <span class="zh">調校滑桿使你的圖像與綠色目標圖像重合。</span>
+          </span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+          <span id="challengeStatus" class="challenge-status" style="display: none;">Not close yet</span>
+          <button id="toggleChallengeBtn" class="btn btn-challenge">
+            Start Challenge <span class="zh">開始挑戰</span>
+          </button>
+          <button id="newChallengeBtn" class="btn" style="display: none;">
+            New Target <span class="zh">新目標</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 3: GUIDED INQUIRY & OBSERVATION LOG -->
+    <section class="panel inquiry-column">
+      <div class="panel-title">
+        <span>Guided Inquiry & Observation Log <span class="zh">探究問題與觀察記錄</span></span>
+      </div>
+
+      <div id="inquiryContainer" class="inquiry-list"></div>
+
+      <div class="log-actions">
+        <button id="clearLogBtn" class="btn">Clear Notes <span class="zh">清除記錄</span></button>
+        <button id="saveLogBtn" class="btn btn-primary">Save my observations (.txt) <span class="zh">下載觀察記錄</span></button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       APPLICATION LOGIC (Pure Vanilla JS)
+       ======================================================================== -->
+  <script>
+    /**
+     * Application State
+     * Stores current function mode, parameters, view settings, trace point,
+     * challenge target, and student observation notes.
+     */
+    const state = {
+      mode: 'quadratic', // 'constant' | 'linear' | 'quadratic'
+      params: {
+        constant: { c: 3 },
+        linear: { a: 2, b: -1 },
+        quadratic: { a: 1, b: 0, c: -4 }
+      },
+      compare: {
+        enabled: false,
+        a: 1,
+        b: 0,
+        c: 2
+      },
+      options: {
+        showIntercepts: true,
+        showVertex: true,
+        traceEnabled: false
+      },
+      traceX: 1.5,
+      isDraggingTrace: false,
+      isPanning: false,
+      panStart: { x: 0, y: 0 },
+      view: {
+        originX: 0,
+        originY: 0,
+        scale: 32 // pixels per 1 mathematical unit
+      },
+      challenge: {
+        active: false,
+        target: null // stores hidden coefficients
+      },
+      notes: {
+        constant: ['', '', ''],
+        linear: ['', '', '', ''],
+        quadratic: ['', '', '', '', '']
+      }
+    };
+
+    /**
+     * Inquiry Questions Bank (Strictly open questions, zero conclusions or formulas)
+     */
+    const INQUIRY_QUESTIONS = {
+      constant: [
+        {
+          en: "1. Move the slider for c. How does the line move, and what direction does it always point?",
+          zh: "移動 c 的滑桿。直線如何移動？它總是朝哪個方向延伸？"
+        },
+        {
+          en: "2. Where does the graph cross the y-axis? Does it ever cross the x-axis? Test different values of c.",
+          zh: "圖像在何處與 y 軸相交？它會與 x 軸相交嗎？試測試不同的 c 值。"
+        },
+        {
+          en: "3. Turn on Trace and drag along the line. What do you notice about the y-coordinates of different points?",
+          zh: "開啟「追蹤」並沿直線拖曳。你發現不同點的 y 坐標有什麼特點？"
+        }
+      ],
+      linear: [
+        {
+          en: "1. Change the coefficient of x (a) between positive, zero, and negative values. Describe how the slant of the line changes.",
+          zh: "把 x 的係數 (a) 調校為正數、零及負數。描述直線的傾斜度有什麼變化。"
+        },
+        {
+          en: "2. Keep a fixed and change the constant term (b). What moves on the graph? Compare the y-intercept with b.",
+          zh: "保持 a 不變，改變常數項 (b)。圖像有什麼移動？比較 y 截距與 b 的數值。"
+        },
+        {
+          en: "3. Set a = 2 and b = -4. Note the x-intercept and y-intercept. Now try a = -2 and b = 4. What stays the same and what changes?",
+          zh: "設定 a = 2 及 b = -4，記下 x 截距及 y 截距。再試 a = -2 及 b = 4，有什麼不變？有什麼改變？"
+        },
+        {
+          en: "4. Can you adjust a and b so that the line passes right through the origin (0, 0)? Record the values you found.",
+          zh: "你能否調校 a 和 b 使直線穿過原點 (0, 0)？記下你找到的數值。"
+        }
+      ],
+      quadratic: [
+        {
+          en: "1. What happens to the graph when you change the coefficient of x² (a)? Try positive, negative, large, and small values. Describe what you see.",
+          zh: "改變 x² 的係數 (a) 時，圖像有什麼變化？試用正數、負數、較大及較小的數值，描述你的發現。"
+        },
+        {
+          en: "2. Where does the graph cross the y-axis? Does changing a or b move that y-axis crossing? Record your observation.",
+          zh: "圖像在何處與 y 軸相交？改變 a 或 b 會移動該交點嗎？記下你的觀察。"
+        },
+        {
+          en: "3. Find three different sets of (a, b, c) where the graph has NO x-intercepts, ONE x-intercept, and TWO x-intercepts.",
+          zh: "找出三組不同的 (a, b, c) 數值，使圖像分別「沒有 x 截距」、「只有一個 x 截距」及「有兩個 x 截距」。"
+        },
+        {
+          en: "4. Watch the vertex point. Can you make the vertex the highest point on the curve? The lowest point? What did you change?",
+          zh: "觀察頂點。你能否使頂點成為曲線上的最高點？或最低點？你改變了哪個參數？"
+        },
+        {
+          en: "5. Turn on 'Compare two quadratics'. Keep a and c identical between both graphs and change only b. How does the vertex move?",
+          zh: "開啟「比較兩個二次函數」。保持兩條曲線的 a 和 c 相同，只改變 b，頂點如何移動？"
+        }
+      ]
+    };
+
+    /* ========================================================================
+       DOM REFERENCES
+       ======================================================================== */
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+
+    const equationDisplay = document.getElementById('equationDisplay');
+    const shapeNotice = document.getElementById('shapeNotice');
+    const slidersContainer = document.getElementById('slidersContainer');
+    const inquiryContainer = document.getElementById('inquiryContainer');
+
+    const chkIntercepts = document.getElementById('chkIntercepts');
+    const chkVertex = document.getElementById('chkVertex');
+    const vertexOptionRow = document.getElementById('vertexOptionRow');
+    const chkTrace = document.getElementById('chkTrace');
+
+    const compareSection = document.getElementById('compareSection');
+    const chkCompare = document.getElementById('chkCompare');
+    const compareControls = document.getElementById('compareControls');
+    const compareEqDisplay = document.getElementById('compareEqDisplay');
+    const compareSlidersContainer = document.getElementById('compareSlidersContainer');
+
+    const legendCompare = document.getElementById('legendCompare');
+    const legendTarget = document.getElementById('legendTarget');
+    const legendVertex = document.getElementById('legendVertex');
+    const legendTrace = document.getElementById('legendTrace');
+
+    const toggleChallengeBtn = document.getElementById('toggleChallengeBtn');
+    const newChallengeBtn = document.getElementById('newChallengeBtn');
+    const challengeStatus = document.getElementById('challengeStatus');
+
+    /* ========================================================================
+       INITIALIZATION & EVENT LISTENERS
+       ======================================================================== */
+    function init() {
+      resizeCanvas(true);
+      window.addEventListener('resize', () => resizeCanvas(false));
+
+      // Mode buttons
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          switchMode(btn.dataset.mode);
+        });
+      });
+
+      // Language toggle
+      document.getElementById('toggleLangBtn').addEventListener('click', () => {
+        document.body.classList.toggle('hide-zh');
+      });
+
+      // Reset parameters
+      document.getElementById('resetParamsBtn').addEventListener('click', () => {
+        if (state.mode === 'constant') state.params.constant = { c: 3 };
+        if (state.mode === 'linear') state.params.linear = { a: 2, b: -1 };
+        if (state.mode === 'quadratic') state.params.quadratic = { a: 1, b: 0, c: -4 };
+        buildSliders();
+        updateAll();
+      });
+
+      // Checkboxes
+      chkIntercepts.addEventListener('change', (e) => {
+        state.options.showIntercepts = e.target.checked;
+        draw();
+      });
+
+      chkVertex.addEventListener('change', (e) => {
+        state.options.showVertex = e.target.checked;
+        draw();
+      });
+
+      chkTrace.addEventListener('change', (e) => {
+        state.options.traceEnabled = e.target.checked;
+        legendTrace.style.display = e.target.checked ? 'flex' : 'none';
+        draw();
+      });
+
+      chkCompare.addEventListener('change', (e) => {
+        state.compare.enabled = e.target.checked;
+        compareControls.style.display = e.target.checked ? 'flex' : 'none';
+        legendCompare.style.display = e.target.checked ? 'flex' : 'none';
+        if (e.target.checked) buildCompareSliders();
+        draw();
+      });
+
+      // Zoom & View buttons
+      document.getElementById('zoomInBtn').addEventListener('click', () => {
+        state.view.scale = Math.min(100, state.view.scale * 1.2);
+        draw();
+      });
+
+      document.getElementById('zoomOutBtn').addEventListener('click', () => {
+        state.view.scale = Math.max(12, state.view.scale / 1.2);
+        draw();
+      });
+
+      document.getElementById('resetViewBtn').addEventListener('click', () => {
+        centerOrigin();
+        state.view.scale = 32;
+        draw();
+      });
+
+      // Challenge Mode buttons
+      toggleChallengeBtn.addEventListener('click', () => {
+        state.challenge.active = !state.challenge.active;
+        if (state.challenge.active) {
+          generateChallengeTarget();
+          toggleChallengeBtn.innerHTML = 'Stop Challenge <span class="zh">結束挑戰</span>';
+          newChallengeBtn.style.display = 'inline-block';
+          challengeStatus.style.display = 'inline-block';
+          legendTarget.style.display = 'flex';
+        } else {
+          state.challenge.target = null;
+          toggleChallengeBtn.innerHTML = 'Start Challenge <span class="zh">開始挑戰</span>';
+          newChallengeBtn.style.display = 'none';
+          challengeStatus.style.display = 'none';
+          legendTarget.style.display = 'none';
+        }
+        updateAll();
+      });
+
+      newChallengeBtn.addEventListener('click', () => {
+        generateChallengeTarget();
+        updateAll();
+      });
+
+      // Observation Log buttons
+      document.getElementById('saveLogBtn').addEventListener('click', downloadObservations);
+      document.getElementById('clearLogBtn').addEventListener('click', () => {
+        state.notes[state.mode] = state.notes[state.mode].map(() => '');
+        renderInquiryPanel();
+      });
+
+      // Canvas pointer interactions (Trace dragging & Panning)
+      setupCanvasInteraction();
+
+      // Start in quadratic mode
+      switchMode('quadratic');
+    }
+
+    function resizeCanvas(resetCenter) {
+      const rect = canvasWrapper.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (resetCenter || state.view.originX === 0) {
+        centerOrigin();
+      }
+      draw();
+    }
+
+    function centerOrigin() {
+      const rect = canvasWrapper.getBoundingClientRect();
+      state.view.originX = rect.width / 2;
+      state.view.originY = rect.height / 2;
+    }
+
+    /* ========================================================================
+       MODE SWITCHING & UI BUILDERS
+       ======================================================================== */
+    function switchMode(newMode) {
+      state.mode = newMode;
+
+      // Show/hide quadratic-specific options
+      const isQuad = newMode === 'quadratic';
+      vertexOptionRow.style.display = isQuad ? 'flex' : 'none';
+      legendVertex.style.display = isQuad ? 'flex' : 'none';
+      compareSection.style.display = isQuad ? 'flex' : 'none';
+
+      if (!isQuad) {
+        state.compare.enabled = false;
+        chkCompare.checked = false;
+        compareControls.style.display = 'none';
+        legendCompare.style.display = 'none';
+      }
+
+      if (state.challenge.active) {
+        generateChallengeTarget();
+      }
+
+      buildSliders();
