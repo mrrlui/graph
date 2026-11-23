@@ -5,38 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Function Graph Explorer | 函數圖像探究</title>
   <style>
-    /* ==========================================================================
-       CSS VARIABLES & THEME (Colour-blind friendly Okabe-Ito inspired palette)
-       ========================================================================== */
     :root {
       --bg-app: #f4f6f9;
       --bg-panel: #ffffff;
       --border-color: #d8dee9;
       --text-main: #1e293b;
       --text-muted: #526075;
-      
-      /* Primary Curve: Deep Blue */
       --primary-curve: #0072b2;
-      /* Comparison Curve: Vermilion Orange */
       --compare-curve: #d55e00;
-      /* Target Challenge Curve: Bluish Green */
       --target-curve: #009e73;
-      /* Intercepts & Vertex Highlights */
       --vertex-color: #cc79a7;
       --intercept-color: #0072b2;
       --trace-color: #e69f00;
-
-      --accent-btn: #0072b2;
-      --accent-btn-hover: #005585;
       --radius: 10px;
       --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang HK", "Microsoft JhengHei", sans-serif;
@@ -45,9 +30,6 @@
       line-height: 1.5;
     }
 
-    /* ==========================================================================
-       HEADER & MODE SELECTOR
-       ========================================================================== */
     header {
       background: var(--bg-panel);
       border-bottom: 1px solid var(--border-color);
@@ -59,27 +41,10 @@
       gap: 1rem;
     }
 
-    .brand {
-      display: flex;
-      flex-direction: column;
-    }
+    .brand h1 { font-size: 1.2rem; font-weight: 700; }
+    .brand span { font-size: 0.85rem; color: var(--text-muted); }
 
-    .brand h1 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .brand span {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .mode-tabs {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
+    .mode-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
     .mode-btn {
       padding: 0.55rem 1rem;
@@ -90,13 +55,9 @@
       font-weight: 600;
       font-size: 0.9rem;
       color: var(--text-main);
-      transition: all 0.15s ease;
     }
 
-    .mode-btn:hover {
-      border-color: var(--primary-curve);
-    }
-
+    .mode-btn:hover { border-color: var(--primary-curve); }
     .mode-btn.active {
       background: var(--primary-curve);
       border-color: var(--primary-curve);
@@ -114,14 +75,6 @@
       color: var(--text-muted);
     }
 
-    .lang-toggle:hover {
-      background: #eef2f6;
-      color: var(--text-main);
-    }
-
-    /* ==========================================================================
-       MAIN 3-COLUMN RESPONSIVE GRID
-       ========================================================================== */
     .workspace {
       display: grid;
       grid-template-columns: 330px 1fr 370px;
@@ -129,22 +82,15 @@
       padding: 1rem;
       max-width: 1650px;
       margin: 0 auto;
-      min-height: calc(100vh - 76px);
     }
 
     @media (max-width: 1200px) {
-      .workspace {
-        grid-template-columns: 320px 1fr;
-      }
-      .inquiry-column {
-        grid-column: 1 / -1;
-      }
+      .workspace { grid-template-columns: 320px 1fr; }
+      .inquiry-column { grid-column: 1 / -1; }
     }
 
     @media (max-width: 820px) {
-      .workspace {
-        grid-template-columns: 1fr;
-      }
+      .workspace { grid-template-columns: 1fr; }
     }
 
     .panel {
@@ -168,9 +114,6 @@
       align-items: center;
     }
 
-    /* ==========================================================================
-       CONTROLS & SLIDERS
-       ========================================================================== */
     .equation-box {
       background: #f1f5f9;
       padding: 0.75rem;
@@ -193,25 +136,11 @@
       border: 1px solid #e2e8f0;
     }
 
-    .slider-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
+    .slider-header { font-size: 0.9rem; font-weight: 600; }
 
-    .slider-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
+    .slider-controls { display: flex; align-items: center; gap: 0.6rem; }
 
-    input[type="range"] {
-      flex: 1;
-      accent-color: var(--primary-curve);
-      cursor: pointer;
-    }
+    input[type="range"] { flex: 1; accent-color: var(--primary-curve); cursor: pointer; }
 
     input[type="number"] {
       width: 68px;
@@ -234,11 +163,7 @@
       display: none;
     }
 
-    .checkbox-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+    .checkbox-list { display: flex; flex-direction: column; gap: 0.5rem; }
 
     .checkbox-item {
       display: flex;
@@ -249,13 +174,8 @@
       user-select: none;
     }
 
-    .checkbox-item input {
-      width: 16px;
-      height: 16px;
-      accent-color: var(--primary-curve);
-    }
+    .checkbox-item input { width: 16px; height: 16px; accent-color: var(--primary-curve); }
 
-    /* Compare Panel */
     .compare-box {
       border-top: 1px dashed var(--border-color);
       padding-top: 0.8rem;
@@ -274,9 +194,7 @@
       gap: 0.5rem;
     }
 
-    .compare-sliders input[type="range"] {
-      accent-color: var(--compare-curve);
-    }
+    .compare-sliders input[type="range"] { accent-color: var(--compare-curve); }
 
     .compare-eq {
       font-family: "Cambria Math", "Times New Roman", serif;
@@ -284,15 +202,6 @@
       color: var(--compare-curve);
       text-align: center;
       font-size: 1.05rem;
-    }
-
-    /* ==========================================================================
-       CENTER CANVAS & CHALLENGE BAR
-       ========================================================================== */
-    .canvas-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
     }
 
     .canvas-toolbar {
@@ -308,53 +217,31 @@
       font-size: 0.85rem;
     }
 
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.85rem;
-      align-items: center;
-    }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-weight: 600;
-    }
+    .legend-item { display: flex; align-items: center; gap: 0.35rem; font-weight: 600; }
 
-    .dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
 
-    .line-swatch {
-      width: 18px;
-      height: 4px;
-      border-radius: 2px;
-      display: inline-block;
-    }
+    .line-swatch { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
 
-    .canvas-wrapper {
-      position: relative;
+    .svg-wrapper {
       width: 100%;
-      flex: 1;
-      min-height: 440px;
+      height: 460px;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      overflow: hidden;
       background: #ffffff;
+      overflow: hidden;
     }
 
-    canvas {
-      display: block;
+    #graphSvg {
       width: 100%;
       height: 100%;
+      display: block;
       touch-action: none;
+      user-select: none;
     }
 
-    /* Challenge Mode Strip */
     .challenge-bar {
       background: #ecfdf5;
       border: 1px solid #a7f3d0;
@@ -367,11 +254,7 @@
       gap: 0.75rem;
     }
 
-    .challenge-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
+    .challenge-info { display: flex; flex-direction: column; gap: 0.2rem; }
 
     .challenge-status {
       font-weight: 700;
@@ -383,21 +266,9 @@
       display: inline-block;
     }
 
-    .status-close {
-      background: #d1fae5;
-      border-color: #059669;
-      color: #065f46;
-    }
+    .status-close { background: #d1fae5; border-color: #059669; color: #065f46; }
+    .status-not-close { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
 
-    .status-not-close {
-      background: #fee2e2;
-      border-color: #dc2626;
-      color: #991b1b;
-    }
-
-    /* ==========================================================================
-       BUTTONS
-       ========================================================================== */
     .btn {
       padding: 0.45rem 0.85rem;
       border-radius: 6px;
@@ -406,36 +277,12 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s;
     }
 
-    .btn:hover {
-      background: #f1f5f9;
-    }
+    .btn:hover { background: #f1f5f9; }
+    .btn-primary { background: var(--primary-curve); color: #fff; border-color: var(--primary-curve); }
+    .btn-challenge { background: var(--target-curve); color: #fff; border-color: var(--target-curve); }
 
-    .btn-primary {
-      background: var(--accent-btn);
-      color: #fff;
-      border-color: var(--accent-btn);
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-btn-hover);
-    }
-
-    .btn-challenge {
-      background: var(--target-curve);
-      color: #fff;
-      border-color: var(--target-curve);
-    }
-
-    .btn-challenge:hover {
-      background: #007d5b;
-    }
-
-    /* ==========================================================================
-       GUIDED INQUIRY & OBSERVATION LOG
-       ========================================================================== */
     .inquiry-list {
       display: flex;
       flex-direction: column;
@@ -455,12 +302,7 @@
       gap: 0.5rem;
     }
 
-    .question-text {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
+    .question-text { font-size: 0.9rem; font-weight: 600; }
     .question-text .zh {
       display: block;
       font-weight: 500;
@@ -480,11 +322,6 @@
       resize: vertical;
     }
 
-    textarea:focus {
-      outline: none;
-      border-color: var(--primary-curve);
-    }
-
     .log-actions {
       display: flex;
       gap: 0.5rem;
@@ -493,101 +330,86 @@
       padding-top: 0.75rem;
     }
 
-    /* Bilingual toggle helper */
-    body.hide-zh .zh {
-      display: none !important;
-    }
+    body.hide-zh .zh { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- ========================================================================
-       HEADER
-       ======================================================================== -->
   <header>
     <div class="brand">
       <h1>Function Graph Explorer <span class="zh">| 函數圖像探究</span></h1>
       <span>Form 4 Mathematics Inquiry Lab <span class="zh">中四數學探究活動</span></span>
     </div>
 
-    <div class="mode-tabs" role="tablist">
-      <button class="mode-btn" data-mode="constant" role="tab">
+    <div class="mode-tabs">
+      <button type="button" class="mode-btn" id="btnModeConstant" onclick="switchMode('constant')">
         1. Constant <span class="zh">常數函數</span>
       </button>
-      <button class="mode-btn" data-mode="linear" role="tab">
+      <button type="button" class="mode-btn" id="btnModeLinear" onclick="switchMode('linear')">
         2. Linear <span class="zh">線性函數</span>
       </button>
-      <button class="mode-btn active" data-mode="quadratic" role="tab">
+      <button type="button" class="mode-btn active" id="btnModeQuadratic" onclick="switchMode('quadratic')">
         3. Quadratic <span class="zh">二次函數</span>
       </button>
     </div>
 
-    <button id="toggleLangBtn" class="lang-toggle" title="Show/Hide Traditional Chinese">
+    <button type="button" class="lang-toggle" onclick="document.body.classList.toggle('hide-zh')">
       中文: ON / OFF
     </button>
   </header>
 
-  <!-- ========================================================================
-       MAIN WORKSPACE
-       ======================================================================== -->
   <main class="workspace">
-
-    <!-- COLUMN 1: PARAMETERS & EXPLORATION TOOLS -->
+    <!-- COLUMN 1: PARAMETERS -->
     <section class="panel">
       <div class="panel-title">
         <span>Parameters <span class="zh">參數控制</span></span>
-        <button id="resetParamsBtn" class="btn" title="Reset sliders">Reset <span class="zh">重設</span></button>
+        <button type="button" class="btn" onclick="resetParameters()">Reset <span class="zh">重設</span></button>
       </div>
 
-      <!-- Current Equation Display -->
-      <div id="equationDisplay" class="equation-box">y = 1x² + 0x + 0</div>
+      <div id="equationDisplay" class="equation-box">y = 1x² + 0x − 4</div>
 
-      <!-- Gentle Neutral Notice when a = 0 in Quadratic Mode -->
       <div id="shapeNotice" class="shape-notice">
         Notice: The graph changed shape. <span class="zh">留意：圖像的形狀改變了。</span>
       </div>
 
-      <!-- Dynamic Sliders Container -->
       <div id="slidersContainer" style="display: flex; flex-direction: column; gap: 0.65rem;"></div>
 
-      <!-- Graph Feature Checkboxes -->
       <div class="panel-title" style="margin-top: 0.25rem;">
         <span>Display Options <span class="zh">顯示選項</span></span>
       </div>
 
       <div class="checkbox-list">
         <label class="checkbox-item">
-          <input type="checkbox" id="chkIntercepts" checked />
+          <input type="checkbox" id="chkIntercepts" checked onchange="toggleOption('showIntercepts', this.checked)" />
           <span>Show intercepts <span class="zh">顯示截距點</span></span>
         </label>
 
         <label class="checkbox-item" id="vertexOptionRow">
-          <input type="checkbox" id="chkVertex" checked />
+          <input type="checkbox" id="chkVertex" checked onchange="toggleOption('showVertex', this.checked)" />
           <span>Show vertex <span class="zh">顯示頂點</span></span>
         </label>
 
         <label class="checkbox-item">
-          <input type="checkbox" id="chkTrace" />
+          <input type="checkbox" id="chkTrace" onchange="toggleTrace(this.checked)" />
           <span>Trace point on curve (drag on graph) <span class="zh">追蹤曲線上的一點（可拖曳）</span></span>
         </label>
       </div>
 
-      <!-- Quadratic Compare Panel -->
       <div id="compareSection" class="compare-box">
         <label class="checkbox-item" style="font-weight: 700;">
-          <input type="checkbox" id="chkCompare" />
+          <input type="checkbox" id="chkCompare" onchange="toggleCompare(this.checked)" />
           <span>Compare two quadratics <span class="zh">比較兩個二次函數</span></span>
         </label>
 
         <div id="compareControls" class="compare-sliders">
-          <div id="compareEqDisplay" class="compare-eq">y = 1x² + 0x + 0</div>
+          <div id="compareEqDisplay" class="compare-eq">y₂ = 1x² + 0x + 2</div>
           <div id="compareSlidersContainer" style="display: flex; flex-direction: column; gap: 0.45rem;"></div>
         </div>
       </div>
     </section>
 
-    <!-- COLUMN 2: INTERACTIVE COORDINATE PLANE -->
-    <section class="panel canvas-panel">
+    <!-- COLUMN 2: SVG COORDINATE PLANE -->
+    <section class="panel">
       <div class="canvas-toolbar">
         <div class="legend">
           <span class="legend-item">
@@ -599,7 +421,7 @@
             Second Graph <span class="zh">第二個圖像</span>
           </span>
           <span class="legend-item" id="legendTarget" style="display: none;">
-            <span class="line-swatch" style="background: var(--target-curve); border-bottom: 2px dashed #fff;"></span>
+            <span class="line-swatch" style="background: var(--target-curve);"></span>
             Target Graph <span class="zh">目標圖像</span>
           </span>
           <span class="legend-item">
@@ -617,17 +439,20 @@
         </div>
 
         <div style="display: flex; gap: 0.4rem;">
-          <button id="zoomInBtn" class="btn" title="Zoom In">+</button>
-          <button id="zoomOutBtn" class="btn" title="Zoom Out">−</button>
-          <button id="resetViewBtn" class="btn">Center <span class="zh">置中</span></button>
+          <button type="button" class="btn" onclick="changeZoom(1.25)">+</button>
+          <button type="button" class="btn" onclick="changeZoom(0.8)">−</button>
+          <button type="button" class="btn" onclick="resetView()">Center <span class="zh">置中</span></button>
         </div>
       </div>
 
-      <div class="canvas-wrapper" id="canvasWrapper">
-        <canvas id="graphCanvas"></canvas>
+      <div class="svg-wrapper">
+        <svg id="graphSvg" viewBox="0 0 640 460" preserveAspectRatio="xMidYMid slice">
+          <g id="gridLayer"></g>
+          <g id="curvesLayer"></g>
+          <g id="pointsLayer"></g>
+        </svg>
       </div>
 
-      <!-- Challenge / Predict Mode -->
       <div class="challenge-bar">
         <div class="challenge-info">
           <strong style="font-size: 0.92rem;">
@@ -640,17 +465,17 @@
 
         <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
           <span id="challengeStatus" class="challenge-status" style="display: none;">Not close yet</span>
-          <button id="toggleChallengeBtn" class="btn btn-challenge">
+          <button type="button" id="toggleChallengeBtn" class="btn btn-challenge" onclick="toggleChallenge()">
             Start Challenge <span class="zh">開始挑戰</span>
           </button>
-          <button id="newChallengeBtn" class="btn" style="display: none;">
+          <button type="button" id="newChallengeBtn" class="btn" style="display: none;" onclick="newChallengeTarget()">
             New Target <span class="zh">新目標</span>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- COLUMN 3: GUIDED INQUIRY & OBSERVATION LOG -->
+    <!-- COLUMN 3: GUIDED INQUIRY -->
     <section class="panel inquiry-column">
       <div class="panel-title">
         <span>Guided Inquiry & Observation Log <span class="zh">探究問題與觀察記錄</span></span>
@@ -659,64 +484,37 @@
       <div id="inquiryContainer" class="inquiry-list"></div>
 
       <div class="log-actions">
-        <button id="clearLogBtn" class="btn">Clear Notes <span class="zh">清除記錄</span></button>
-        <button id="saveLogBtn" class="btn btn-primary">Save my observations (.txt) <span class="zh">下載觀察記錄</span></button>
+        <button type="button" class="btn" onclick="clearNotes()">Clear Notes <span class="zh">清除記錄</span></button>
+        <button type="button" class="btn btn-primary" onclick="downloadObservations()">Save my observations (.txt) <span class="zh">下載觀察記錄</span></button>
       </div>
     </section>
-
   </main>
 
-  <!-- ========================================================================
-       APPLICATION LOGIC (Pure Vanilla JS)
-       ======================================================================== -->
   <script>
-    /**
-     * Application State
-     * Stores current function mode, parameters, view settings, trace point,
-     * challenge target, and student observation notes.
-     */
-    const state = {
-      mode: 'quadratic', // 'constant' | 'linear' | 'quadratic'
+    var SVG_NS = "http://www.w3.org/2000/svg";
+    var VIEW_W = 640;
+    var VIEW_H = 460;
+
+    var state = {
+      mode: "quadratic",
       params: {
         constant: { c: 3 },
         linear: { a: 2, b: -1 },
         quadratic: { a: 1, b: 0, c: -4 }
       },
-      compare: {
-        enabled: false,
-        a: 1,
-        b: 0,
-        c: 2
-      },
-      options: {
-        showIntercepts: true,
-        showVertex: true,
-        traceEnabled: false
-      },
+      compare: { enabled: false, a: 1, b: 0, c: 2 },
+      options: { showIntercepts: true, showVertex: true, traceEnabled: false },
       traceX: 1.5,
-      isDraggingTrace: false,
-      isPanning: false,
-      panStart: { x: 0, y: 0 },
-      view: {
-        originX: 0,
-        originY: 0,
-        scale: 32 // pixels per 1 mathematical unit
-      },
-      challenge: {
-        active: false,
-        target: null // stores hidden coefficients
-      },
+      view: { originX: 320, originY: 230, scale: 30 },
+      challenge: { active: false, target: null },
       notes: {
-        constant: ['', '', ''],
-        linear: ['', '', '', ''],
-        quadratic: ['', '', '', '', '']
+        constant: ["", "", ""],
+        linear: ["", "", "", ""],
+        quadratic: ["", "", "", "", ""]
       }
     };
 
-    /**
-     * Inquiry Questions Bank (Strictly open questions, zero conclusions or formulas)
-     */
-    const INQUIRY_QUESTIONS = {
+    var INQUIRY_QUESTIONS = {
       constant: [
         {
           en: "1. Move the slider for c. How does the line move, and what direction does it always point?",
@@ -773,187 +571,612 @@
       ]
     };
 
-    /* ========================================================================
-       DOM REFERENCES
-       ======================================================================== */
-    const canvas = document.getElementById('graphCanvas');
-    const ctx = canvas.getContext('2d');
-    const canvasWrapper = document.getElementById('canvasWrapper');
-
-    const equationDisplay = document.getElementById('equationDisplay');
-    const shapeNotice = document.getElementById('shapeNotice');
-    const slidersContainer = document.getElementById('slidersContainer');
-    const inquiryContainer = document.getElementById('inquiryContainer');
-
-    const chkIntercepts = document.getElementById('chkIntercepts');
-    const chkVertex = document.getElementById('chkVertex');
-    const vertexOptionRow = document.getElementById('vertexOptionRow');
-    const chkTrace = document.getElementById('chkTrace');
-
-    const compareSection = document.getElementById('compareSection');
-    const chkCompare = document.getElementById('chkCompare');
-    const compareControls = document.getElementById('compareControls');
-    const compareEqDisplay = document.getElementById('compareEqDisplay');
-    const compareSlidersContainer = document.getElementById('compareSlidersContainer');
-
-    const legendCompare = document.getElementById('legendCompare');
-    const legendTarget = document.getElementById('legendTarget');
-    const legendVertex = document.getElementById('legendVertex');
-    const legendTrace = document.getElementById('legendTrace');
-
-    const toggleChallengeBtn = document.getElementById('toggleChallengeBtn');
-    const newChallengeBtn = document.getElementById('newChallengeBtn');
-    const challengeStatus = document.getElementById('challengeStatus');
-
-    /* ========================================================================
-       INITIALIZATION & EVENT LISTENERS
-       ======================================================================== */
-    function init() {
-      resizeCanvas(true);
-      window.addEventListener('resize', () => resizeCanvas(false));
-
-      // Mode buttons
-      document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          switchMode(btn.dataset.mode);
-        });
-      });
-
-      // Language toggle
-      document.getElementById('toggleLangBtn').addEventListener('click', () => {
-        document.body.classList.toggle('hide-zh');
-      });
-
-      // Reset parameters
-      document.getElementById('resetParamsBtn').addEventListener('click', () => {
-        if (state.mode === 'constant') state.params.constant = { c: 3 };
-        if (state.mode === 'linear') state.params.linear = { a: 2, b: -1 };
-        if (state.mode === 'quadratic') state.params.quadratic = { a: 1, b: 0, c: -4 };
-        buildSliders();
-        updateAll();
-      });
-
-      // Checkboxes
-      chkIntercepts.addEventListener('change', (e) => {
-        state.options.showIntercepts = e.target.checked;
-        draw();
-      });
-
-      chkVertex.addEventListener('change', (e) => {
-        state.options.showVertex = e.target.checked;
-        draw();
-      });
-
-      chkTrace.addEventListener('change', (e) => {
-        state.options.traceEnabled = e.target.checked;
-        legendTrace.style.display = e.target.checked ? 'flex' : 'none';
-        draw();
-      });
-
-      chkCompare.addEventListener('change', (e) => {
-        state.compare.enabled = e.target.checked;
-        compareControls.style.display = e.target.checked ? 'flex' : 'none';
-        legendCompare.style.display = e.target.checked ? 'flex' : 'none';
-        if (e.target.checked) buildCompareSliders();
-        draw();
-      });
-
-      // Zoom & View buttons
-      document.getElementById('zoomInBtn').addEventListener('click', () => {
-        state.view.scale = Math.min(100, state.view.scale * 1.2);
-        draw();
-      });
-
-      document.getElementById('zoomOutBtn').addEventListener('click', () => {
-        state.view.scale = Math.max(12, state.view.scale / 1.2);
-        draw();
-      });
-
-      document.getElementById('resetViewBtn').addEventListener('click', () => {
-        centerOrigin();
-        state.view.scale = 32;
-        draw();
-      });
-
-      // Challenge Mode buttons
-      toggleChallengeBtn.addEventListener('click', () => {
-        state.challenge.active = !state.challenge.active;
-        if (state.challenge.active) {
-          generateChallengeTarget();
-          toggleChallengeBtn.innerHTML = 'Stop Challenge <span class="zh">結束挑戰</span>';
-          newChallengeBtn.style.display = 'inline-block';
-          challengeStatus.style.display = 'inline-block';
-          legendTarget.style.display = 'flex';
-        } else {
-          state.challenge.target = null;
-          toggleChallengeBtn.innerHTML = 'Start Challenge <span class="zh">開始挑戰</span>';
-          newChallengeBtn.style.display = 'none';
-          challengeStatus.style.display = 'none';
-          legendTarget.style.display = 'none';
+    function createSvgEl(tag, attrs) {
+      var el = document.createElementNS(SVG_NS, tag);
+      for (var k in attrs) {
+        if (attrs.hasOwnProperty(k)) {
+          el.setAttribute(k, attrs[k]);
         }
-        updateAll();
-      });
-
-      newChallengeBtn.addEventListener('click', () => {
-        generateChallengeTarget();
-        updateAll();
-      });
-
-      // Observation Log buttons
-      document.getElementById('saveLogBtn').addEventListener('click', downloadObservations);
-      document.getElementById('clearLogBtn').addEventListener('click', () => {
-        state.notes[state.mode] = state.notes[state.mode].map(() => '');
-        renderInquiryPanel();
-      });
-
-      // Canvas pointer interactions (Trace dragging & Panning)
-      setupCanvasInteraction();
-
-      // Start in quadratic mode
-      switchMode('quadratic');
-    }
-
-    function resizeCanvas(resetCenter) {
-      const rect = canvasWrapper.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (resetCenter || state.view.originX === 0) {
-        centerOrigin();
       }
-      draw();
+      return el;
     }
 
-    function centerOrigin() {
-      const rect = canvasWrapper.getBoundingClientRect();
-      state.view.originX = rect.width / 2;
-      state.view.originY = rect.height / 2;
-    }
-
-    /* ========================================================================
-       MODE SWITCHING & UI BUILDERS
-       ======================================================================== */
     function switchMode(newMode) {
       state.mode = newMode;
 
-      // Show/hide quadratic-specific options
-      const isQuad = newMode === 'quadratic';
-      vertexOptionRow.style.display = isQuad ? 'flex' : 'none';
-      legendVertex.style.display = isQuad ? 'flex' : 'none';
-      compareSection.style.display = isQuad ? 'flex' : 'none';
+      document.getElementById("btnModeConstant").className = "mode-btn" + (newMode === "constant" ? " active" : "");
+      document.getElementById("btnModeLinear").className = "mode-btn" + (newMode === "linear" ? " active" : "");
+      document.getElementById("btnModeQuadratic").className = "mode-btn" + (newMode === "quadratic" ? " active" : "");
+
+      var isQuad = (newMode === "quadratic");
+      document.getElementById("vertexOptionRow").style.display = isQuad ? "flex" : "none";
+      document.getElementById("legendVertex").style.display = isQuad ? "flex" : "none";
+      document.getElementById("compareSection").style.display = isQuad ? "flex" : "none";
 
       if (!isQuad) {
         state.compare.enabled = false;
-        chkCompare.checked = false;
-        compareControls.style.display = 'none';
-        legendCompare.style.display = 'none';
+        document.getElementById("chkCompare").checked = false;
+        document.getElementById("compareControls").style.display = "none";
+        document.getElementById("legendCompare").style.display = "none";
       }
 
       if (state.challenge.active) {
-        generateChallengeTarget();
+        newChallengeTarget();
       }
 
       buildSliders();
+      renderInquiryPanel();
+      updateAll();
+    }
+
+    function resetParameters() {
+      if (state.mode === "constant") state.params.constant = { c: 3 };
+      if (state.mode === "linear") state.params.linear = { a: 2, b: -1 };
+      if (state.mode === "quadratic") state.params.quadratic = { a: 1, b: 0, c: -4 };
+      buildSliders();
+      updateAll();
+    }
+
+    function toggleOption(key, checked) {
+      state.options[key] = checked;
+      renderGraph();
+    }
+
+    function toggleTrace(checked) {
+      state.options.traceEnabled = checked;
+      document.getElementById("legendTrace").style.display = checked ? "flex" : "none";
+      renderGraph();
+    }
+
+    function toggleCompare(checked) {
+      state.compare.enabled = checked;
+      document.getElementById("compareControls").style.display = checked ? "flex" : "none";
+      document.getElementById("legendCompare").style.display = checked ? "flex" : "none";
+      if (checked) buildCompareSliders();
+      updateAll();
+    }
+
+    function changeZoom(factor) {
+      var nextScale = state.view.scale * factor;
+      state.view.scale = Math.max(14, Math.min(80, nextScale));
+      renderGraph();
+    }
+
+    function resetView() {
+      state.view.originX = 320;
+      state.view.originY = 230;
+      state.view.scale = 30;
+      renderGraph();
+    }
+
+    function buildSliders() {
+      var container = document.getElementById("slidersContainer");
+      container.innerHTML = "";
+
+      if (state.mode === "constant") {
+        container.appendChild(makeSlider("Constant term 常數項 (c)", -10, 10, 0.5, state.params.constant.c, function(v) {
+          state.params.constant.c = v;
+          updateAll();
+        }));
+      } else if (state.mode === "linear") {
+        container.appendChild(makeSlider("Coefficient of x 一次項係數 (a)", -10, 10, 0.5, state.params.linear.a, function(v) {
+          state.params.linear.a = v;
+          updateAll();
+        }));
+        container.appendChild(makeSlider("Constant term 常數項 (b)", -10, 10, 0.5, state.params.linear.b, function(v) {
+          state.params.linear.b = v;
+          updateAll();
+        }));
+      } else {
+        container.appendChild(makeSlider("Coefficient of x² 二次項係數 (a)", -5, 5, 0.25, state.params.quadratic.a, function(v) {
+          state.params.quadratic.a = v;
+          updateAll();
+        }));
+        container.appendChild(makeSlider("Coefficient of x 一次項係數 (b)", -10, 10, 0.5, state.params.quadratic.b, function(v) {
+          state.params.quadratic.b = v;
+          updateAll();
+        }));
+        container.appendChild(makeSlider("Constant term 常數項 (c)", -10, 10, 0.5, state.params.quadratic.c, function(v) {
+          state.params.quadratic.c = v;
+          updateAll();
+        }));
+      }
+    }
+
+    function buildCompareSliders() {
+      var container = document.getElementById("compareSlidersContainer");
+      container.innerHTML = "";
+
+      container.appendChild(makeSlider("Parameter a₂", -5, 5, 0.25, state.compare.a, function(v) {
+        state.compare.a = v;
+        updateAll();
+      }));
+      container.appendChild(makeSlider("Parameter b₂", -10, 10, 0.5, state.compare.b, function(v) {
+        state.compare.b = v;
+        updateAll();
+      }));
+      container.appendChild(makeSlider("Parameter c₂", -10, 10, 0.5, state.compare.c, function(v) {
+        state.compare.c = v;
+        updateAll();
+      }));
+    }
+
+    function makeSlider(labelText, min, max, step, initVal, onChange) {
+      var box = document.createElement("div");
+      box.className = "slider-group";
+
+      var header = document.createElement("div");
+      header.className = "slider-header";
+      header.textContent = labelText;
+
+      var row = document.createElement("div");
+      row.className = "slider-controls";
+
+      var range = document.createElement("input");
+      range.type = "range";
+      range.min = min;
+      range.max = max;
+      range.step = step;
+      range.value = initVal;
+
+      var num = document.createElement("input");
+      num.type = "number";
+      num.min = min;
+      num.max = max;
+      num.step = step;
+      num.value = initVal;
+
+      range.oninput = function() {
+        var val = parseFloat(range.value);
+        num.value = val;
+        onChange(val);
+      };
+
+      num.onchange = function() {
+        var val = parseFloat(num.value);
+        if (isNaN(val)) val = 0;
+        val = Math.max(min, Math.min(max, val));
+        num.value = val;
+        range.value = val;
+        onChange(val);
+      };
+
+      row.appendChild(range);
+      row.appendChild(num);
+      box.appendChild(header);
+      box.appendChild(row);
+      return box;
+    }
+
+    function renderInquiryPanel() {
+      var container = document.getElementById("inquiryContainer");
+      container.innerHTML = "";
+      var list = INQUIRY_QUESTIONS[state.mode];
+
+      for (var i = 0; i !== list.length; i++) {
+        (function(idx) {
+          var q = list[idx];
+          var card = document.createElement("div");
+          card.className = "question-card";
+
+          var qText = document.createElement("div");
+          qText.className = "question-text";
+          qText.innerHTML = q.en + '<span class="zh">' + q.zh + "</span>";
+
+          var ta = document.createElement("textarea");
+          ta.placeholder = "Write what you observe... 寫下你的觀察...";
+          ta.value = state.notes[state.mode][idx] || "";
+          ta.oninput = function() {
+            state.notes[state.mode][idx] = ta.value;
+          };
+
+          card.appendChild(qText);
+          card.appendChild(ta);
+          container.appendChild(card);
+        })(i);
+      }
+    }
+
+    function evaluatePrimary(x) {
+      if (state.mode === "constant") return state.params.constant.c;
+      if (state.mode === "linear") return state.params.linear.a * x + state.params.linear.b;
+      var q = state.params.quadratic;
+      return q.a * x * x + q.b * x + q.c;
+    }
+
+    function evaluateCompare(x) {
+      var c = state.compare;
+      return c.a * x * x + c.b * x + c.c;
+    }
+
+    function evaluateTarget(x) {
+      var t = state.challenge.target;
+      if (!t) return 0;
+      if (state.mode === "constant") return t.c;
+      if (state.mode === "linear") return t.a * x + t.b;
+      return t.a * x * x + t.b * x + t.c;
+    }
+
+    function formatTerm(coeff, variable, isFirst) {
+      var isNeg = (Math.sign(coeff) === -1);
+      var sign = isNeg ? (isFirst ? "−" : " − ") : (isFirst ? "" : " + ");
+      return sign + Math.abs(coeff) + variable;
+    }
+
+    function updateEquationDisplay() {
+      var eqBox = document.getElementById("equationDisplay");
+      var notice = document.getElementById("shapeNotice");
+
+      if (state.mode === "constant") {
+        eqBox.textContent = "y = " + state.params.constant.c;
+        notice.style.display = "none";
+      } else if (state.mode === "linear") {
+        var l = state.params.linear;
+        eqBox.textContent = "y = " + formatTerm(l.a, "x", true) + formatTerm(l.b, "", false);
+        notice.style.display = "none";
+      } else {
+        var q = state.params.quadratic;
+        eqBox.textContent = "y = " + formatTerm(q.a, "x²", true) + formatTerm(q.b, "x", false) + formatTerm(q.c, "", false);
+        notice.style.display = (q.a === 0) ? "block" : "none";
+      }
+
+      if (state.compare.enabled) {
+        var c = state.compare;
+        document.getElementById("compareEqDisplay").textContent =
+          "y₂ = " + formatTerm(c.a, "x²", true) + formatTerm(c.b, "x", false) + formatTerm(c.c, "", false);
+      }
+    }
+
+    function toggleChallenge() {
+      state.challenge.active = !state.challenge.active;
+      var btn = document.getElementById("toggleChallengeBtn");
+      var newBtn = document.getElementById("newChallengeBtn");
+      var status = document.getElementById("challengeStatus");
+      var legend = document.getElementById("legendTarget");
+
+      if (state.challenge.active) {
+        newChallengeTarget();
+        btn.innerHTML = 'Stop Challenge <span class="zh">結束挑戰</span>';
+        newBtn.style.display = "inline-block";
+        status.style.display = "inline-block";
+        legend.style.display = "flex";
+      } else {
+        state.challenge.target = null;
+        btn.innerHTML = 'Start Challenge <span class="zh">開始挑戰</span>';
+        newBtn.style.display = "none";
+        status.style.display = "none";
+        legend.style.display = "none";
+      }
+      updateAll();
+    }
+
+    function newChallengeTarget() {
+      function randStep(min, max, step) {
+        var count = Math.round((max - min) / step);
+        return min + Math.floor(Math.random() * (count + 1)) * step;
+      }
+
+      if (state.mode === "constant") {
+        state.challenge.target = { c: randStep(-6, 6, 1) };
+      } else if (state.mode === "linear") {
+        state.challenge.target = { a: randStep(-4, 4, 0.5), b: randStep(-5, 5, 1) };
+      } else {
+        var a = 0;
+        while (a === 0) { a = randStep(-2.5, 2.5, 0.5); }
+        state.challenge.target = { a: a, b: randStep(-5, 5, 1), c: randStep(-5, 5, 1) };
+      }
+      updateAll();
+    }
+
+    function evaluateChallengeProximity() {
+      if (!state.challenge.active || !state.challenge.target) return;
+      var xs = [-5, -3, -1, 0, 1, 3, 5];
+      var sum = 0;
+      for (var i = 0; i !== xs.length; i++) {
+        sum += Math.abs(evaluatePrimary(xs[i]) - evaluateTarget(xs[i]));
+      }
+      var avg = sum / xs.length;
+      var status = document.getElementById("challengeStatus");
+
+      if (Math.min(avg, 0.05) === avg && avg !== 0.05) {
+        status.textContent = "Matched! 完全重合！";
+        status.className = "challenge-status status-close";
+      } else if (Math.min(avg, 1.2) === avg) {
+        status.textContent = "Close! 很接近了！";
+        status.className = "challenge-status status-close";
+      } else {
+        status.textContent = "Not close yet 仍未接近";
+        status.className = "challenge-status status-not-close";
+      }
+    }
+
+    function toSvgX(mx) { return state.view.originX + mx * state.view.scale; }
+    function toSvgY(my) { return state.view.originY - my * state.view.scale; }
+    function toMathX(sx) { return (sx - state.view.originX) / state.view.scale; }
+    function toMathY(sy) { return (state.view.originY - sy) / state.view.scale; }
+
+    function renderGraph() {
+      var gridLayer = document.getElementById("gridLayer");
+      var curvesLayer = document.getElementById("curvesLayer");
+      var pointsLayer = document.getElementById("pointsLayer");
+
+      gridLayer.innerHTML = "";
+      curvesLayer.innerHTML = "";
+      pointsLayer.innerHTML = "";
+
+      var startX = Math.floor(toMathX(0));
+      var endX = Math.ceil(toMathX(VIEW_W));
+      var startY = Math.floor(toMathY(VIEW_H));
+      var endY = Math.ceil(toMathY(0));
+
+      for (var x = startX; x !== endX + 1; x++) {
+        var sx = toSvgX(x);
+        var isAxis = (x === 0);
+        gridLayer.appendChild(createSvgEl("line", {
+          x1: sx, y1: 0, x2: sx, y2: VIEW_H,
+          stroke: isAxis ? "#334155" : "#e2e8f0",
+          "stroke-width": isAxis ? 2 : 1
+        }));
+
+        if (!isAxis) {
+          var labelY = Math.min(Math.max(state.view.originY + 15, 15), VIEW_H - 6);
+          var tx = createSvgEl("text", {
+            x: sx, y: labelY, fill: "#64748b",
+            "font-size": "11", "text-anchor": "middle"
+          });
+          tx.textContent = x;
+          gridLayer.appendChild(tx);
+        }
+      }
+
+      for (var y = startY; y !== endY + 1; y++) {
+        var sy = toSvgY(y);
+        var isYAxis = (y === 0);
+        gridLayer.appendChild(createSvgEl("line", {
+          x1: 0, y1: sy, x2: VIEW_W, y2: sy,
+          stroke: isYAxis ? "#334155" : "#e2e8f0",
+          "stroke-width": isYAxis ? 2 : 1
+        }));
+
+        if (!isYAxis) {
+          var labelX = Math.min(Math.max(state.view.originX - 8, 24), VIEW_W - 8);
+          var ty = createSvgEl("text", {
+            x: labelX, y: sy + 4, fill: "#64748b",
+            "font-size": "11", "text-anchor": "end"
+          });
+          ty.textContent = y;
+          gridLayer.appendChild(ty);
+        }
+      }
+
+      // Draw Target Curve
+      if (state.challenge.active && state.challenge.target) {
+        drawSvgCurve(curvesLayer, evaluateTarget, "#009e73", 3.5, "8,6");
+      }
+
+      // Draw Second Quadratic Curve
+      if (state.mode === "quadratic" && state.compare.enabled) {
+        drawSvgCurve(curvesLayer, evaluateCompare, "#d55e00", 3, "");
+      }
+
+      // Draw Primary Curve
+      drawSvgCurve(curvesLayer, evaluatePrimary, "#0072b2", 3.5, "");
+
+      // Intercepts
+      if (state.options.showIntercepts) {
+        plotIntercepts(pointsLayer);
+      }
+
+      // Vertex
+      if (state.mode === "quadratic" && state.options.showVertex) {
+        plotVertex(pointsLayer);
+      }
+
+      // Trace Point
+      if (state.options.traceEnabled) {
+        var txVal = state.traceX;
+        var tyVal = evaluatePrimary(txVal);
+        plotPoint(pointsLayer, txVal, tyVal, "#e69f00", -16);
+      }
+    }
+
+    function drawSvgCurve(layer, fn, color, width, dash) {
+      var d = "";
+      var penDown = false;
+
+      for (var px = 0; px !== VIEW_W + 4; px += 4) {
+        var mx = toMathX(px);
+        var my = fn(mx);
+        var py = toSvgY(my);
+
+        if (Math.abs(py) !== Math.min(Math.abs(py), 1500)) {
+          penDown = false;
+          continue;
+        }
+
+        if (!penDown) {
+          d += "M " + px.toFixed(1) + " " + py.toFixed(1) + " ";
+          penDown = true;
+        } else {
+          d += "L " + px.toFixed(1) + " " + py.toFixed(1) + " ";
+        }
+      }
+
+      var attrs = {
+        d: d,
+        fill: "none",
+        stroke: color,
+        "stroke-width": width,
+        "stroke-linecap": "round"
+      };
+      if (dash) attrs["stroke-dasharray"] = dash;
+      layer.appendChild(createSvgEl("path", attrs));
+    }
+
+    function plotPoint(layer, mx, my, color, offsetY) {
+      var sx = toSvgX(mx);
+      var sy = toSvgY(my);
+      var cx = Math.abs(mx) === Math.min(Math.abs(mx), 1e-7) ? 0 : Number(mx.toFixed(2));
+      var cy = Math.abs(my) === Math.min(Math.abs(my), 1e-7) ? 0 : Number(my.toFixed(2));
+      var label = "(" + cx + ", " + cy + ")";
+      var boxW = label.length * 7 + 12;
+
+      layer.appendChild(createSvgEl("circle", {
+        cx: sx, cy: sy, r: 5.5,
+        fill: color, stroke: "#ffffff", "stroke-width": 2
+      }));
+
+      layer.appendChild(createSvgEl("rect", {
+        x: sx - boxW / 2, y: sy + offsetY - 10,
+        width: boxW, height: 18, rx: 4,
+        fill: "rgba(255,255,255,0.92)", stroke: color, "stroke-width": 1
+      }));
+
+      var txt = createSvgEl("text", {
+        x: sx, y: sy + offsetY + 3,
+        fill: "#1e293b", "font-size": "11",
+        "font-weight": "bold", "text-anchor": "middle"
+      });
+      txt.textContent = label;
+      layer.appendChild(txt);
+    }
+
+    function plotIntercepts(layer) {
+      var color = "#0072b2";
+      if (state.mode === "constant") {
+        plotPoint(layer, 0, state.params.constant.c, color, -14);
+      } else if (state.mode === "linear") {
+        var l = state.params.linear;
+        plotPoint(layer, 0, l.b, color, -14);
+        if (l.a !== 0) {
+          var xi = -l.b / l.a;
+          if (Math.abs(xi) !== Math.min(Math.abs(xi), 1e-5)) {
+            plotPoint(layer, xi, 0, color, 18);
+          }
+        }
+      } else {
+        var q = state.params.quadratic;
+        plotPoint(layer, 0, q.c, color, -14);
+        if (q.a === 0) {
+          if (q.b !== 0) {
+            var xlin = -q.c / q.b;
+            if (Math.abs(xlin) !== Math.min(Math.abs(xlin), 1e-5)) {
+              plotPoint(layer, xlin, 0, color, 18);
+            }
+          }
+        } else {
+          var disc = q.b * q.b - 4 * q.a * q.c;
+          if (Math.abs(disc) === Math.min(Math.abs(disc), 1e-7)) {
+            var x0 = -q.b / (2 * q.a);
+            if (Math.abs(x0) !== Math.min(Math.abs(x0), 1e-5)) plotPoint(layer, x0, 0, color, 18);
+          } else if (Math.sign(disc) === 1) {
+            var s = Math.sqrt(disc);
+            var x1 = (-q.b - s) / (2 * q.a);
+            var x2 = (-q.b + s) / (2 * q.a);
+            if (Math.abs(x1) !== Math.min(Math.abs(x1), 1e-5)) plotPoint(layer, x1, 0, color, 18);
+            if (Math.abs(x2) !== Math.min(Math.abs(x2), 1e-5)) plotPoint(layer, x2, 0, color, 18);
+          }
+        }
+      }
+    }
+
+    function plotVertex(layer) {
+      var q = state.params.quadratic;
+      if (q.a === 0) return;
+      var vx = -q.b / (2 * q.a);
+      var vy = q.a * vx * vx + q.b * vx + q.c;
+      var off = (Math.sign(q.a) === 1) ? 20 : -15;
+      plotPoint(layer, vx, vy, "#cc79a7", off);
+    }
+
+    function clearNotes() {
+      var arr = state.notes[state.mode];
+      for (var i = 0; i !== arr.length; i++) arr[i] = "";
+      renderInquiryPanel();
+    }
+
+    function downloadObservations() {
+      var out = "FORM 4 MATHEMATICS: FUNCTION GRAPH EXPLORER LOG\n";
+      out += "====================================================\n\n";
+      var modes = [
+        { key: "constant", title: "PART 1: CONSTANT FUNCTIONS (y = c)" },
+        { key: "linear", title: "PART 2: LINEAR FUNCTIONS (y = ax + b)" },
+        { key: "quadratic", title: "PART 3: QUADRATIC FUNCTIONS (y = ax^2 + bx + c)" }
+      ];
+
+      for (var m = 0; m !== modes.length; m++) {
+        var mod = modes[m];
+        out += mod.title + "\n----------------------------------------------------\n";
+        var qs = INQUIRY_QUESTIONS[mod.key];
+        for (var i = 0; i !== qs.length; i++) {
+          var ans = (state.notes[mod.key][i] || "").trim() || "(No observation recorded)";
+          out += qs[i].en + "\nMy Observation: " + ans + "\n\n";
+        }
+      }
+
+      var blob = new Blob([out], { type: "text/plain;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "My_Function_Observations.txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // SVG pointer drag for Trace & Panning
+    (function setupSvgDrag() {
+      var svg = document.getElementById("graphSvg");
+      var dragging = false;
+      var panStartX = 0;
+      var panStartY = 0;
+
+      function getSvgCoords(evt) {
+        var rect = svg.getBoundingClientRect();
+        var clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        var clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        return {
+          x: ((clientX - rect.left) / rect.width) * VIEW_W,
+          y: ((clientY - rect.top) / rect.height) * VIEW_H
+        };
+      }
+
+      svg.onpointerdown = function(e) {
+        var pt = getSvgCoords(e);
+        dragging = true;
+        panStartX = pt.x - state.view.originX;
+        panStartY = pt.y - state.view.originY;
+        if (state.options.traceEnabled) {
+          state.traceX = Math.round(toMathX(pt.x) * 10) / 10;
+          renderGraph();
+        }
+      };
+
+      svg.onpointermove = function(e) {
+        if (!dragging) return;
+        var pt = getSvgCoords(e);
+        if (state.options.traceEnabled) {
+          state.traceX = Math.round(toMathX(pt.x) * 10) / 10;
+        } else {
+          state.view.originX = pt.x - panStartX;
+          state.view.originY = pt.y - panStartY;
+        }
+        renderGraph();
+      };
+
+      svg.onpointerup = function() { dragging = false; };
+      svg.onpointerleave = function() { dragging = false; };
+    })();
+
+    function updateAll() {
+      updateEquationDisplay();
+      evaluateChallengeProximity();
+      renderGraph();
+    }
+
+    // Initialize immediately
+    switchMode("quadratic");
+  </script>
+</body>
+</html>
